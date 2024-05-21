@@ -4,3 +4,4 @@ __pycache__/
 data/
 faiss_index/
 ~test.xlsx
+app1.py
