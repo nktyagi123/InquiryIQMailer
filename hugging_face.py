@@ -16,7 +16,7 @@ huggingface_api_key = os.getenv("HUGGING_FACE_API_KEY")
 
 from huggingface_hub import login
 
-login(token="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")
+login(token="")
 
 
 # Use a pipeline as a high-level helper
