@@ -27,10 +27,11 @@ def get_gemini_response(Question, Answer):
     You are expert to clissify the data into different categories like Simple, Average or Complex.
     you can use string matching, keyword extraction, or any other method to classify the data.
 
-    Use this Question {Question} and Answer {Answer} to classify the data into different categories like Simple, Average or Complex.
+    Use this Question {Question} and Answer {Answer} to classify the data into different complexity level with grade 1 - 10.
 
-    Output should have only single word like Simple, Average or Complex.:
+    Output should have only integer value like 1, 2, 3 ,4, etc:
 
+    
 
     """
 
@@ -43,7 +44,7 @@ def get_gemini_response(Question, Answer):
     print(filled_prompt)
     
     response = model.generate_content(filled_prompt)
-    print(response.text)
+    #print(response.text)
     return response.text
 
 # Initialize an empty list to store the generated records
@@ -51,20 +52,31 @@ records = []
 
 try:
     # Generate the specified number of records
-    df = pd.read_excel("test.xlsx")
+    df = pd.read_excel("Book.xlsx")
+    #df = df1[df1["Ticket Category"]== "Career Guidance"]
     # Extract questions and answers
     questions = df["Student message"]
     answers = df["Handler message"]
     for i in range(len(df)):
         try:
+            #print(questions[i], answers[i])
             category = get_gemini_response(questions[i], answers[i])
-            df.loc[i, "category"] = category
+            print(category)
+            df.loc[i, "grade"] = int(category)
+            val = int(category)
+            if val <= 4:
+                df.loc[i, "Category"] = "Simple"
+            elif val > 4 and val <= 7:
+                df.loc[i, "Category"] = "Average"
+            else:
+                df.loc[i, "Category"] = "Complex"
+            print("Category Assigned Successfully!", df['Category'])
             print(f"{i+1} Records Successfully Generated!")
         except Exception as inner_e:
             print(f"Error occurred while processing record {i+1}: {inner_e}")
     df.to_excel("classified_file.xlsx", index=False)
 except Exception as e:
-    print(f"An error occurred: {e}")
+    print(e)
 
 
 print("CSV file saved successfully!")
